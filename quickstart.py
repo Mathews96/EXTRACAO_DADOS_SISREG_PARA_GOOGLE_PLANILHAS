@@ -85,17 +85,22 @@ def extrair_tabela(Categoria, risco):
     Select(navegador.find_element(By.NAME, "qtd_itens_pag")).select_by_index(3)
     time.sleep(5)
 
-    total_de_paginas = navegador.find_element(By.XPATH, '//table/tbody/tr/td[contains(text(),"Exibindo Página")]')   
-    print(int(total_de_paginas.text.split()[-1]))
+    total_de_paginas = navegador.find_element(By.XPATH, '//table/tbody/tr/td[contains(text(),"Exibindo Página")]')
+    total_de_paginas = int(total_de_paginas.text.split()[-1])
     time.sleep(5)
 
-    #for e extrair página por página
+    for pagina in range(total_de_paginas):
+        pagina_atual = int(navegador.find_element(By.NAME, 'txtPagina').get_attribute("value"))
+        if pagina == pagina_atual:
+            extrair_dados_tabela();
+            navegador.find_element(By.XPATH, "/html/body/form/center[3]/table/tbody/tr/td/a/img").click()
+            
     #ir inserir tudo na planilha do google
-    
+
+def extrair_dados_tabela():   
     tabela = navegador.find_element(By.XPATH, "/html/body/form/table")
     lista_de_pacientes = tabela.find_elements(By.TAG_NAME, "tr")
 
-    # Itera sobre as linhas e extrai os dados das células
     for row in lista_de_pacientes:
         cells = row.find_elements(By.TAG_NAME, 'td')
         cell_data = [cell.text.strip() for cell in cells]
