@@ -79,6 +79,35 @@ logarSISREG()
 navegador.get("https://sisregiii.saude.gov.br/cgi-bin/autorizador")
 time.sleep(5)
 
+def extrair_dados_tabela():   
+    tabela = navegador.find_element(By.XPATH, "/html/body/form/table")
+    lista_de_pacientes = tabela.find_elements(By.TAG_NAME, "tr")
+    
+    for linha in lista_de_pacientes:
+        cells = linha.find_elements(By.TAG_NAME, 'td')
+        cell_data = [cell.text.strip() for cell in cells]
+   
+        if(len(cell_data) > 11):
+            print(cell_data[1])
+            setCelulaPlanilha('RESERVA_TECNICA!', 'A2', [[cell_data[1]]])#CÓDIGO DA SOLICITAÇÃO
+            setCelulaPlanilha('RESERVA_TECNICA!', 'C2', [[cell_data[2]]])#DATA DA SOLICITAÇÃO
+            #setCelulaPlanilha('RESERVA_TECNICA!', 'D2', risco)#RISCO
+            setCelulaPlanilha('RESERVA_TECNICA!', 'E2', [[cell_data[4]]])#PACIENTE
+            setCelulaPlanilha('RESERVA_TÉCNICA!', 'F2',  [[cell_data[5]]])#IDADE PACIENTE
+            setCelulaPlanilha('RESERVA_TÉCNICA!', 'G2',  [[cell_data[6]]])#PROCEDIMENTO
+            setCelulaPlanilha('RESERVA_TÉCNICA!', 'H2',  [[cell_data[7]]])#CID
+            #setCelulaPlanilha('RESERVA_TÉCNICA!', 'I2',  )#PROCEDIMENTO_SOLICITANDO
+            #setCelulaPlanilha('RESERVA_TÉCNICA!', 'J2',  [[cell_data[4]]])#HISTÓRICO DE OBSERVAÇÕES
+            setCelulaPlanilha('RESERVA_TÉCNICA!', 'K2',  [[cell_data[8]]])#UNIDADE
+            setCelulaPlanilha('RESERVA_TÉCNICA!', 'L2',  [[cell_data[9]]])#CENTRAL SOLICITANTE
+            setCelulaPlanilha('RESERVA_TÉCNICA!', 'M2',  [[cell_data[10]]])#SITUAÇÃO
+            #setCelulaPlanilha('RESERVA_TÉCNICA!', 'N2',  Categoria)#VISUALIZADO
+            #setCelulaPlanilha('RESERVA_TÉCNICA!', 'F2',  [[cell_data[4]]])#CONFERIDO
+           
+            #entrar na planilha, verificar se existe o código da solicitação
+            #se existir, atualiza na linha; se não existir, cria uma nova linha na última
+            #print(len(cell_data))
+              
 def extrair_tabela(Categoria, risco):
     Select(navegador.find_element(By.NAME, "st_visualizado")).select_by_visible_text(Categoria)
     Select(navegador.find_element(By.NAME, "co_risco")).select_by_visible_text(risco)    
@@ -92,65 +121,22 @@ def extrair_tabela(Categoria, risco):
     for pagina in range(total_de_paginas):
         pagina_atual = int(navegador.find_element(By.NAME, 'txtPagina').get_attribute("value"))
         if pagina == pagina_atual:
-            extrair_dados_tabela();
+            extrair_dados_tabela()
             navegador.find_element(By.XPATH, "/html/body/form/center[3]/table/tbody/tr/td/a/img").click()
             
     #ir inserir tudo na planilha do google
 
-def extrair_dados_tabela():   
-    tabela = navegador.find_element(By.XPATH, "/html/body/form/table")
-    lista_de_pacientes = tabela.find_elements(By.TAG_NAME, "tr")
-
-    for row in lista_de_pacientes:
-        cells = row.find_elements(By.TAG_NAME, 'td')
-        cell_data = [cell.text.strip() for cell in cells]
-        print(cell_data)    
 
 
 extrair_tabela("Visualizadas", "Prioridade Zero - Emergência")
+'''extrair_tabela("Visualizadas", "Prioridade 1 - Urgência")
+extrair_tabela("Visualizadas", "Prioridade 2 - Não Urgente")
+extrair_tabela("Visualizadas", "Prioridade 3 - Eletivo")
 
-#Selecionar visualizados
-#pegar todos vermelhos e setar como "Visualizado" e Risco "Vermelho"
-#Pegar o quantitativo de páginas
-#pegar a tabela da primeira página até a última
-#jogar tudo na planilha
-
-#pegar todos amarelo e setar como "Visualizado" e Risco "Amarelo"
-#Pegar o quantitativo de páginas
-#pegar a tabela da primeira página até a última
-#jogar tudo na planilha
-
-#pegar todos verdes e setar como "Visualizado" e Risco "Verde"
-#Pegar o quantitativo de páginas
-#pegar a tabela da primeira página até a última
-#jogar tudo na planilha
-
-#pegar todos azuls e setar como "Visualizado" e Risco "Azul"
-#Pegar o quantitativo de páginas
-#pegar a tabela da primeira página até a última
-#jogar tudo na planilha
-
-#Selecionar não visualizados
-#pegar todos vermelhos e setar como "Não Visualizado" e Risco "Vermelho"
-#Pegar o quantitativo de páginas
-#pegar a tabela da primeira página até a última
-#jogar tudo na planilha
-
-#pegar todos amarelo e setar como "Não Visualizado" e Risco "Amarelo"
-#Pegar o quantitativo de páginas
-#pegar a tabela da primeira página até a última
-#jogar tudo na planilha
-
-#pegar todos verdes e setar como "Não Visualizado" e Risco "Verde"
-#Pegar o quantitativo de páginas
-#pegar a tabela da primeira página até a última
-#jogar tudo na planilha
-
-#pegar todos azuls e setar como "Não Visualizado" e Risco "Azul"
-#Pegar o quantitativo de páginas
-#pegar a tabela da primeira página até a última
-#jogar tudo na planilha
- 
+extrair_tabela("Não Visualizadas", "Prioridade Zero - Emergência")
+extrair_tabela("Não Visualizadas", "Prioridade 1 - Urgência")
+extrair_tabela("Não Visualizadas", "Prioridade 2 - Não Urgente")
+extrair_tabela("Não Visualizadas", "Prioridade 3 - Eletivo")'''
 
 
 #entrar chamado por chamado e pegar PROCEDIMENTO SOLICITADO e inserir na planilha
